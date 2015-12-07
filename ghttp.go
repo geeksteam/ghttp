@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/geekbros/SHM-Backend/config"
 	"github.com/geekbros/SHM-Backend/panicerr"
 	"github.com/geekbros/Tools/logger"
 	"github.com/geekbros/ghttp/api"
@@ -311,8 +310,8 @@ func getCurrentModule(path string) string {
 
 // Set http headers to no-cache, content json
 func setHeaderNoCache(w http.ResponseWriter) {
-	w.Header().Set("Server", config.WebServerName)
-	w.Header().Set("Version", config.Version)
+	w.Header().Set("Server", cfg.WebServerName)
+	w.Header().Set("Version", cfg.Version)
 	w.Header().Set("Cache-Control", "post-check=0, pre-check=0, no-store, no-cache, must-revalidate, max-age=0")
 	w.Header().Set("Pragma", "no-cache")
 	w.Header().Set("Expires", "-1")

@@ -9,14 +9,10 @@ import (
 )
 
 type Config struct {
-	// CacheLifetime int `default:"0" comment:"Cache lifetime in days for static files (images,css, etc)"`
-	//
-	// SessionIDKey       string `default:"sessionID" comment:"Key of session id in cookies map, which generates randomly."`
-	// SessionIDKeyLength int    `default:"24" comment:"Length of session id key for random generation."`
-	//
-	// SessionLifeTime    int `default:"1800" comment:"Lifetime of a session. Seconds."`
-	// MaxHandlersForUser int `default:"30" comment:"Max allowed number of simultaneous queries for single user."`
-	MaxHandlersForUser int `default:"30" comment:"Max allowed number of simultaneous queries for single user."`
+	MaxHandlersForUser int    `default:"30" comment:"Max allowed number of simultaneous queries for single user."`
+	Version            string `default:"0.1.1alpha"`
+	WebServerName      string `default:"SHM API server"`
+
 	bruteforce.BruteForce
 	journal.Journal
 	api.API
