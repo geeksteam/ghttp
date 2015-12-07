@@ -26,9 +26,6 @@ var (
 
 func SetConfig(c Config) {
 	cfg = c
-}
-
-func init() {
 	bruteforce.SetConfig(bruteforce.BruteForce{
 		BlockAttempts: cfg.BruteForce.BlockAttempts,
 		BanTime:       cfg.BruteForce.BanTime,
