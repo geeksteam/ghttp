@@ -8,12 +8,14 @@ import (
 
 var (
 	cfg                       Utemplates
-	BoltDBMain                = cfg.BoltDBMain
-	BotlDBUserTemplatesBacket = cfg.BotlDBUserTemplatesBacket
+	BoltDBMain                string
+	BotlDBUserTemplatesBacket string
 )
 
 func SetConfig(c Utemplates) {
 	cfg = c
+	BoltDBMain = cfg.BoltDBMain
+	BotlDBUserTemplatesBacket = cfg.BotlDBUserTemplatesBacket
 }
 
 // Set Creates new or update entry for template
