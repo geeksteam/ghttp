@@ -30,7 +30,9 @@ func Delete(templateName string) {
 
 // Get Returns template with gien name
 func Get(templateName string) *UserTemplate {
+	log.Printf("GETTING TEMPLATE %v\n", templateName)
 	templ := &UserTemplate{}
+	log.Printf("db main: %v, encoding: %v\n", BoltDBMain, cfg.DataEncoding)
 	err := boltdb.DB(BoltDBMain, cfg.DataEncoding).Bucket(BotlDBUserTemplatesBacket).Get(templateName, templ)
 	if err != nil {
 		log.Println("Can't load user tamplate:", err)
