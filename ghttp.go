@@ -45,11 +45,6 @@ func SetConfig(c Config) {
 		SessionIDKeyLength: cfg.SessionsConf.SessionIDKeyLength,
 		SessionLifeTime:    cfg.SessionsConf.SessionLifeTime,
 	})
-	utemplates.SetConfig(utemplates.Utemplates{
-		BotlDBUserTemplatesBacket: cfg.Utemplates.BotlDBUserTemplatesBacket,
-		BoltDBMain:                cfg.Utemplates.BoltDBMain,
-		DataEncoding:              cfg.Utemplates.DataEncoding,
-	})
 }
 
 // NewRouter constructs Router instances
@@ -155,7 +150,12 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 
 		// 7. Check module access permisions
 		if sess.Username != "root" {
-			allowedModules := utemplates.Get(sess.Template).Modules
+			u := utemplates.Utemplates{
+				BotlDBUserTemplatesBacket: cfg.Utemplates.BotlDBUserTemplatesBacket,
+				BoltDBMain:                cfg.Utemplates.BoltDBMain,
+				DataEncoding:              cfg.Utemplates.DataEncoding,
+			}
+			allowedModules := u.Get(sess.Template).Modules
 			if err != nil || !hasPermissions(r.RequestURI, allowedModules) {
 				http.Error(w, http.StatusText(403), 403)
 				log.Printf("Permission denied to access '%v' for %v as user %v \n", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username)
