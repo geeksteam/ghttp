@@ -140,7 +140,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		bruteforce.Clean(strings.Split(r.RemoteAddr, ":")[0])
 
 		// 4. Check for timeout before actions for particular handlers
-		bruteforce.CheckTimeout(r, router.Sessions)
+		// bruteforce.CheckTimeout(r, router.Sessions)
 
 		// 5. Getting session info
 		sess, err := router.Sessions.Get(r)

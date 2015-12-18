@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/geekbros/ghttp/sessions"
+	"github.com/geekbros/buravchik/sessions"
 )
 
 var (
@@ -19,14 +19,13 @@ var (
 )
 
 // CheckTimeout Check timeout for concrete handler
-func CheckTimeout(r *http.Request, s *sessions.Sessions) error {
+func CheckTimeout(r *http.Request, s *sessions.Session) error {
 	// Check if current uri in map of timeouts
 	timeout, ok := timeouts[r.URL.Path]
 	if !ok {
 		return fmt.Errorf("No info about timeout of %v", r.URL.Path)
 	}
-	sess, _ := s.Get(r)
-	lastRequest, ok := sess.LastHandlers[r.RequestURI]
+	lastRequest, ok := s.LastHandlers[r.RequestURI]
 	if !ok {
 		return fmt.Errorf("No info about last request of %v", r.RequestURI)
 	}
