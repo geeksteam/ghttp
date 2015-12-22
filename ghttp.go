@@ -11,6 +11,7 @@ import (
 
 	"github.com/geekbros/SHM-Backend/panicerr"
 	"github.com/geekbros/Tools/logger"
+	"github.com/geekbros/Tools/moduleutils"
 	"github.com/geekbros/ghttp/api"
 	"github.com/geekbros/ghttp/bruteforce"
 	"github.com/geekbros/ghttp/journal"
@@ -290,20 +291,11 @@ func (router *Router) CheckNumConnection(username string) {
 // Check for permissions for /uri and module name
 func hasPermissions(path string, modules []string) bool {
 	for _, userModule := range modules {
-		if userModule == getCurrentModule(path) {
+		if userModule == moduleutils.GetCurrentModule(path) {
 			return true
 		}
 	}
 	return false
-}
-
-// getting current panel module
-func getCurrentModule(path string) string {
-	// Remove /api prefix
-	path = strings.Split(path, "/")[2]
-	// Remove GET paramaters from URI
-	fields := strings.Split(path, "?")
-	return fields[0]
 }
 
 // Set http headers to no-cache, content json
