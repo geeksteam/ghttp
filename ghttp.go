@@ -192,16 +192,15 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		/*
 			# Add action to journal
 		*/
-		// TODO: make journal.
-		//
-		// journal.Add(journal.Operation{
-		// 	SessionID: sess.ID,
-		// 	Date:      time.Now().Format(journal.TimeLayout),
-		// 	Username:  sess.Username,
-		// 	Operation: getCurrentModule(r.RequestURI),
-		// 	Content:   r.RequestURI,
-		// 	//Extra:
-		// })
+
+		journal.Add(journal.Operation{
+			SessionID: sess.ID,
+			Date:      time.Now().Format(journal.TimeLayout),
+			Username:  sess.Username,
+			Operation: getCurrentModule(r.RequestURI),
+			Content:   r.RequestURI,
+			//Extra:
+		})
 
 		/*
 			# Run handler's function
