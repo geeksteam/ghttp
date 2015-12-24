@@ -197,7 +197,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			SessionID: sess.ID,
 			Date:      time.Now().Format(journal.TimeLayout),
 			Username:  sess.Username,
-			Operation: getCurrentModule(r.RequestURI),
+			Operation: moduleutils.GetCurrentModule(r.RequestURI),
 			Content:   r.RequestURI,
 			//Extra:
 		})
