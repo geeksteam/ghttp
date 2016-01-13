@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/geekbros/SHM-Backend/core/api"
+	"github.com/geeksteam/SHM-Backend/core/api"
 )
 
 func TestRead(t *testing.T) {

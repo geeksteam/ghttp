@@ -9,14 +9,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/geekbros/SHM-Backend/panicerr"
-	"github.com/geekbros/Tools/logger"
-	"github.com/geekbros/ghttp/api"
-	"github.com/geekbros/ghttp/bruteforce"
-	"github.com/geekbros/ghttp/journal"
-	"github.com/geekbros/ghttp/moduleutils"
-	"github.com/geekbros/ghttp/sessions"
-	"github.com/geekbros/ghttp/utemplates"
+	"github.com/geeksteam/GoTools/logger"
+	"github.com/geeksteam/SHM-Backend/panicerr"
+	"github.com/geeksteam/ghttp/api"
+	"github.com/geeksteam/ghttp/bruteforce"
+	"github.com/geeksteam/ghttp/journal"
+	"github.com/geeksteam/ghttp/moduleutils"
+	"github.com/geeksteam/ghttp/sessions"
+	"github.com/geeksteam/ghttp/utemplates"
 	"github.com/gorilla/mux"
 )
 

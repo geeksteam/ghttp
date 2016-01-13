@@ -3,7 +3,7 @@ package utemplates
 import (
 	"log"
 
-	"github.com/geekbros/Tools/boltdb"
+	"github.com/geeksteam/GoTools/boltdb"
 )
 
 type Utemplates struct {

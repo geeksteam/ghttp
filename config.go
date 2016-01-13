@@ -1,11 +1,11 @@
 package ghttp
 
 import (
-	"github.com/geekbros/ghttp/api"
-	"github.com/geekbros/ghttp/bruteforce"
-	"github.com/geekbros/ghttp/journal"
-	"github.com/geekbros/ghttp/sessions"
-	"github.com/geekbros/ghttp/utemplates"
+	"github.com/geeksteam/ghttp/api"
+	"github.com/geeksteam/ghttp/bruteforce"
+	"github.com/geeksteam/ghttp/journal"
+	"github.com/geeksteam/ghttp/sessions"
+	"github.com/geeksteam/ghttp/utemplates"
 )
 
 type Config struct {

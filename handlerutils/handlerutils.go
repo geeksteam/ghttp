@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/geekbros/Tools/sysutils/osuser"
-	"github.com/geekbros/ghttp/sessions"
+	"github.com/geeksteam/GoTools/sysutils/osuser"
+	"github.com/geeksteam/ghttp/sessions"
 
 	"github.com/gorilla/websocket"
 )

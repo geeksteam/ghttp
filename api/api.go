@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/geekbros/Tools/executils"
+	"github.com/geeksteam/GoTools/executils"
 )
 
 var (

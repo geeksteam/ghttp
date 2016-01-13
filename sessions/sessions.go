@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/geekbros/Tools/deepcopy"
-	"github.com/geekbros/Tools/stringutils"
+	"github.com/geeksteam/GoTools/deepcopy"
+	"github.com/geeksteam/GoTools/stringutils"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
-	"github.com/geekbros/Tools/boltdb"
+	"github.com/geeksteam/GoTools/boltdb"
 )
 
 const (

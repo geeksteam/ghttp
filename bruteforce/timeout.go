@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/geekbros/ghttp/sessions"
+	"github.com/geeksteam/ghttp/sessions"
 )
 
 var (

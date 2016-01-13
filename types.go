@@ -3,7 +3,7 @@ package ghttp
 import (
 	"sync"
 
-	"github.com/geekbros/ghttp/sessions"
+	"github.com/geeksteam/ghttp/sessions"
 	"github.com/gorilla/mux"
 )
 
