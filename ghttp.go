@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/geeksteam/GoTools/logger"
+	"github.com/geeksteam/SHM-Backend/core/users"
 	"github.com/geeksteam/SHM-Backend/panicerr"
 	"github.com/geeksteam/ghttp/api"
 	"github.com/geeksteam/ghttp/bruteforce"
 	"github.com/geeksteam/ghttp/journal"
 	"github.com/geeksteam/ghttp/moduleutils"
 	"github.com/geeksteam/ghttp/sessions"
-	"github.com/geeksteam/ghttp/utemplates"
 	"github.com/gorilla/mux"
 )
 
@@ -151,17 +151,12 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 
 		// 7. Check module access permisions
 		if sess.Username != "root" {
-			u := utemplates.Utemplates{
-				BotlDBUserTemplatesBacket: cfg.Utemplates.BotlDBUserTemplatesBacket,
-				BoltDBMain:                cfg.Utemplates.BoltDBMain,
-				DataEncoding:              cfg.Utemplates.DataEncoding,
-			}
-			template := u.Get(sess.Template)
-			if template == nil {
-				panicerr.Core.UnknownUtemplate("Can't get template" + sess.Template)
+			userInfo := users.Get(sess.Username)
+			if userInfo == nil {
+				panicerr.Core.Auth("Can't get template" + sess.Username)
 			}
 
-			allowedModules := template.Modules
+			allowedModules := userInfo.GetTemplate().Modules
 			if err != nil || !hasPermissions(r.RequestURI, allowedModules) {
 				http.Error(w, http.StatusText(403), 403)
 				log.Printf("Permission denied to access '%v' for %v as user %v \n", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username)
