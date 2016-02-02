@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/geeksteam/GoTools/sysutils/osuser"
+	"github.com/geeksteam/SHM-Backend/panicerr"
 	"github.com/geeksteam/ghttp/sessions"
 
 	"github.com/gorilla/websocket"
@@ -58,25 +59,22 @@ func GetSessionUser(r *http.Request, s *sessions.Sessions) (string, error) {
 
 // ParseJSONBody attempts to parse r's body concerning that it is  a valid json struct.
 // If somethings goes wrong, it makes valid error response to client.
-func ParseJSONBody(w http.ResponseWriter, r *http.Request, jsonStruct interface{}) error {
+func ParseJSONBody(w http.ResponseWriter, r *http.Request, jsonStruct interface{}) {
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(jsonStruct)
 	if err != nil {
-		return err
+		panicerr.JSON.ParsingError(err)
 	}
-	return nil
 }
 
 // WriteJSONBody Marshal interface{} to JSON and write it to response
-func WriteJSONBody(w http.ResponseWriter, jsonStruct interface{}) error {
+func WriteJSONBody(w http.ResponseWriter, jsonStruct interface{}) {
 	js := json.NewEncoder(w)
 
 	if err := js.Encode(jsonStruct); err != nil {
-		return err
+		panicerr.JSON.EncodingError(err)
 	}
-
-	return nil
 }
 
 // SendOkStatus Sends JSON string with Ok status
