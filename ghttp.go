@@ -156,7 +156,12 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 				BoltDBMain:                cfg.Utemplates.BoltDBMain,
 				DataEncoding:              cfg.Utemplates.DataEncoding,
 			}
-			allowedModules := u.Get(sess.Template).Modules
+			template := u.Get(sess.Template)
+			if template == nil {
+				panicerr.Core.UnknownUtemplate("Can't get template" + sess.Template)
+			}
+
+			allowedModules := template.Modules
 			if err != nil || !hasPermissions(r.RequestURI, allowedModules) {
 				http.Error(w, http.StatusText(403), 403)
 				log.Printf("Permission denied to access '%v' for %v as user %v \n", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username)
