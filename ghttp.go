@@ -106,7 +106,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 				switch rec := rec.(type) {
 				// Panicerr panic
 				case panicerr.Error:
-					logger.Log("warning", fmt.Sprintf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("", fmt.Sprintf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
 					//Send response with json error description
 					w.WriteHeader(500)
 					w.Write([]byte(rec.ToJSONString()))
@@ -125,7 +125,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		// 1. Prevent bruteforce of sessionID
 		ok, duration := bruteforce.Check(strings.Split(r.RemoteAddr, ":")[0])
 		if !ok {
-			logger.Log("", "IP "+strings.Split(r.RemoteAddr, ":")[0]+" banned by bruteforce (no session) for "+strconv.FormatInt(duration, 10)+" sec.")
+			logger.Log("warning", "IP "+strings.Split(r.RemoteAddr, ":")[0]+" banned by bruteforce (no session) for "+strconv.FormatInt(duration, 10)+" sec.")
 			http.Error(w, http.StatusText(429), 429)
 			return
 		}
@@ -133,7 +133,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		// 2. Check if session started
 		if !router.Sessions.IsExist(r) {
 			http.Error(w, http.StatusText(401), 401)
-			logger.Log("", "Active session not found at "+r.RequestURI+", client "+strings.Split(r.RemoteAddr, ":")[0])
+			logger.Log("warning", "Active session not found at "+r.RequestURI+", client "+strings.Split(r.RemoteAddr, ":")[0])
 			return
 		}
 
