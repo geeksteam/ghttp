@@ -159,7 +159,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			allowedModules := userInfo.GetTemplate().Modules
 			if err != nil || !hasPermissions(r.RequestURI, allowedModules) {
 				http.Error(w, http.StatusText(403), 403)
-				logger.Log("warning", fmt.Sprintf("Permission denied to access '%v' for %v as user %v \n", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username))
+				logger.Log("warning", fmt.Sprintf("Permission denied to access '%v' for %v as user %v", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username))
 				return
 			}
 		}
