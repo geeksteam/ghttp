@@ -133,7 +133,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		// 2. Check if session started
 		if !router.Sessions.IsExist(r) {
 			http.Error(w, http.StatusText(401), 401)
-			logger.Log("", "Active session not found at "+r.RequestURI, ", client "+strings.Split(r.RemoteAddr, ":")[0])
+			logger.Log("", "Active session not found at "+r.RequestURI+", client "+strings.Split(r.RemoteAddr, ":")[0])
 			return
 		}
 
