@@ -15,9 +15,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// OkStatusJSON JSON string for response 'success'
-const OkStatusJSON = `{ "Status":"Ok" }`
-
 // GetUID returns UID of current session user
 func GetUID(r *http.Request, s *sessions.Sessions) (int, error) {
 	//get os user which uses current session
@@ -77,9 +74,10 @@ func WriteJSONBody(w http.ResponseWriter, jsonStruct interface{}) {
 	}
 }
 
-// SendOkStatus Sends JSON string with Ok status
+// SendOkStatus Sends Status 202 Accepted for successful requests
 func SendOkStatus(w http.ResponseWriter) {
-	w.Write([]byte(OkStatusJSON))
+	// Send HTTP 202 Accepted
+	w.WriteHeader(http.StatusAccepted)
 }
 
 // AddExpiresHeaderAndServe Writes header for cache control
