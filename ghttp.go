@@ -106,13 +106,13 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 				switch rec := rec.(type) {
 				// Panicerr panic
 				case panicerr.Error:
-					logger.Log("warning", fmt.Printf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("warning", fmt.Sprintf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
 					//Send response with json error description
 					w.WriteHeader(500)
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
-					logger.Log("error", fmt.Printf("Unknown Error catched: '%v'  catched at %v, client %v \n ", rec, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("error", fmt.Sprintf("Unknown Error catched: '%v'  catched at %v, client %v \n ", rec, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
 				}
@@ -159,7 +159,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			allowedModules := userInfo.GetTemplate().Modules
 			if err != nil || !hasPermissions(r.RequestURI, allowedModules) {
 				http.Error(w, http.StatusText(403), 403)
-				logger.Log("warning", fmt.Printf("Permission denied to access '%v' for %v as user %v \n", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username))
+				logger.Log("warning", fmt.Sprintf("Permission denied to access '%v' for %v as user %v \n", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username))
 				return
 			}
 		}
@@ -238,12 +238,12 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 				switch rec := rec.(type) {
 				// Panicerr catched
 				case panicerr.Error:
-					logger.Log("warning", fmt.Printf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("warning", fmt.Sprintf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
 					//Send response with json error description
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
-					logger.Log("error", fmt.Printf("Unknown Error catched: '%v'  catched at %v, client %v \n ", rec, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("error", fmt.Sprintf("Unknown Error catched: '%v'  catched at %v, client %v \n ", rec, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
 				}
