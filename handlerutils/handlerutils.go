@@ -74,10 +74,10 @@ func WriteJSONBody(w http.ResponseWriter, jsonStruct interface{}) {
 	}
 }
 
-// SendOkStatus Sends Status 202 Accepted for successful requests
+// SendOkStatus Sends Status 204 Accepted for successful requests
 func SendOkStatus(w http.ResponseWriter) {
-	// Send HTTP 202 Accepted
-	w.WriteHeader(http.StatusAccepted)
+	// Send HTTP 204 everything ok but no content
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // AddExpiresHeaderAndServe Writes header for cache control
