@@ -2,6 +2,7 @@ package ghttp
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -141,7 +142,11 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		bruteforce.Clean(strings.Split(r.RemoteAddr, ":")[0])
 
 		// 4. Check for timeout before actions for particular handlers
-		bruteforce.CheckTimeout(r, router.Sessions)
+		if err := bruteforce.CheckTimeout(r, router.Sessions); err != nil {
+			http.Error(w, http.StatusText(429), 429)
+			log.Println("Timeout error: ", err)
+			return
+		}
 
 		// 5. Getting session info
 		sess, err := router.Sessions.Get(r)

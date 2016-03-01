@@ -28,8 +28,9 @@ func CheckTimeout(r *http.Request, s *sessions.Sessions) error {
 	sess, _ := s.Get(r)
 	lastRequest, ok := sess.LastHandlers[r.RequestURI]
 	if !ok {
-		return fmt.Errorf("No info about last request of %v", r.RequestURI)
+		return nil
 	}
+
 	if time.Now().Unix()-lastRequest <= timeout {
 		return fmt.Errorf(fmt.Sprint("One request '"+r.URL.Path+"' per ", timeout, " seconds limit."))
 	}
