@@ -23,8 +23,9 @@ func CheckTimeout(r *http.Request, s *sessions.Sessions) error {
 	// Check if current uri in map of timeouts
 	timeout, ok := timeouts[r.URL.Path]
 	if !ok {
-		return fmt.Errorf("No info about timeout of %v", r.URL.Path)
+		return nil
 	}
+
 	sess, _ := s.Get(r)
 	lastRequest, ok := sess.LastHandlers[r.RequestURI]
 	if !ok {
