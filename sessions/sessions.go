@@ -84,7 +84,7 @@ type Session struct {
 	Values     map[string]string  `json:"-"` // Мапа с  переменными сессии.
 	Actualizer *ActualizeListener `json:"-"`
 
-	LastHandlers map[string]int64
+	LastHandlers map[string]int64 // /handler and unixtime of last request
 }
 
 // Sessions is a general service, which handles sessions.
