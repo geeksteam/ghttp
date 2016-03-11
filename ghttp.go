@@ -292,8 +292,13 @@ func (router *Router) CheckNumConnection(username string) {
 	}
 }
 
-// Check for permissions for /uri and module name
+// Check for user permissions to module for /uri
 func hasPermissions(path string, modules []string) bool {
+	// If no modules allow access
+	if len(modules) == 0 {
+		return true
+	}
+	// Iterate and check for each module in grant list
 	for _, userModule := range modules {
 		if userModule == moduleutils.GetCurrentModule(path) {
 			return true
