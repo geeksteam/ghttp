@@ -77,6 +77,7 @@ func WriteJSONBody(w http.ResponseWriter, jsonStruct interface{}) {
 // SendOkStatus Sends Status 204 Accepted for successful requests
 func SendOkStatus(w http.ResponseWriter) {
 	// Send HTTP 204 everything ok but no content
+	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusNoContent)
 }
 
