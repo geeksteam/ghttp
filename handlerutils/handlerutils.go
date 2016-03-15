@@ -81,6 +81,13 @@ func SendOkStatus(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// SendOkStatus Sends Status 406 Not acceptable for wrong requests
+func SendNotAcceptable(w http.ResponseWriter) {
+	// Send HTTP 204 everything ok but no content
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusNotAcceptable)
+}
+
 // AddExpiresHeaderAndServe Writes header for cache control
 func AddExpiresHeaderAndServe(h http.Handler, cacheLifeTime int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
