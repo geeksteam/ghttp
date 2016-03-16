@@ -150,6 +150,10 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 
 		// 5. Getting session info
 		sess, err := router.Sessions.Get(r)
+		if err != nil{
+			http.Error(w, http.StatusText(401), 401)
+			return
+		}
 
 		// 6. Register session activity for sessions timeout
 		router.Sessions.RegisterActivity(r)
