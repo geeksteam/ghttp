@@ -46,6 +46,7 @@ func SetConfig(c Config) {
 		SessionIDKey:       cfg.SessionsConf.SessionIDKey,
 		SessionIDKeyLength: cfg.SessionsConf.SessionIDKeyLength,
 		SessionLifeTime:    cfg.SessionsConf.SessionLifeTime,
+		StrictIP:           cfg.SessionsConf.StrictIP,
 	})
 }
 
@@ -131,10 +132,11 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			return
 		}
 
-		// 2. Check if session started
-		if !router.Sessions.IsExist(r) {
+		// 2. Check if session started and getting session info
+		sess, err := router.Sessions.Get(r)
+		if err != nil {
+			logger.Log("warning", err.Error())
 			http.Error(w, http.StatusText(401), 401)
-			logger.Log("warning", "Active session not found at "+r.RequestURI+", client "+strings.Split(r.RemoteAddr, ":")[0])
 			return
 		}
 
@@ -148,17 +150,10 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			return
 		}
 
-		// 5. Getting session info
-		sess, err := router.Sessions.Get(r)
-		if err != nil{
-			http.Error(w, http.StatusText(401), 401)
-			return
-		}
-
-		// 6. Register session activity for sessions timeout
+		// 5. Register session activity for sessions timeout
 		router.Sessions.RegisterActivity(r)
 
-		// 7. Check module access permisions
+		// 6. Check module access permisions
 		if sess.Username != "root" {
 			userInfo := users.Get(sess.Username)
 			if userInfo == nil {
@@ -173,7 +168,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			}
 		}
 
-		// 8. Check for simultaneous connections from a single user
+		// 7. Check for simultaneous connections from a single user
 		router.CheckNumConnection(sess.Username)
 
 		/*

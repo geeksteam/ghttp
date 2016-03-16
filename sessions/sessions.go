@@ -81,7 +81,6 @@ type Session struct {
 	Language   string
 	Template   string
 	Uploads    TempFiles          // Current sessions temp files list
-	Values     map[string]string  `json:"-"` // Мапа с  переменными сессии.
 	Actualizer *ActualizeListener `json:"-"`
 
 	LastHandlers map[string]int64 // /handler and unixtime of last request
@@ -98,7 +97,7 @@ func NewSessions() *Sessions {
 	return &Sessions{make(map[string]Session), sync.RWMutex{}}
 }
 
-// Get attempts to get value with given key from session, which corresponds to given request.
+// Get attempts to get session from local sessions map.
 func (s *Sessions) Get(r *http.Request) (*Session, error) {
 
 	// Getting SessID from cookie
@@ -118,9 +117,11 @@ func (s *Sessions) Get(r *http.Request) (*Session, error) {
 		return nil, errNoSessionWithID
 	}
 
-	// Check session IP
-	if sess.IP != strings.Split(r.RemoteAddr, ":")[0] {
-		return nil, errIP
+	// Check session IP and client IP if StrictIP on
+	if cfg.StrictIP {
+		if sess.IP != strings.Split(r.RemoteAddr, ":")[0] {
+			return nil, errIP
+		}
 	}
 
 	return deepcopy.Iface(&sess).(*Session), nil
@@ -247,7 +248,6 @@ func (s *Sessions) StartNewSession(r *http.Request, w http.ResponseWriter, usern
 		// 	UserInfo:     users.Get(username),
 		Created:      time.Now().Unix(),
 		LastActivity: time.Now().Unix(),
-		Values:       make(map[string]string),
 		Actualizer: &ActualizeListener{
 			MessageChan: make(chan string, 10),
 			CloseChan:   make(chan bool, 10),
@@ -274,34 +274,6 @@ func (s *Sessions) Set(r *http.Request, session Session) error {
 		return err
 	}
 	s.sessions[sess.ID] = session
-	return nil
-}
-
-// SetValue attempts to set given value with given key into session, which
-// corresponds to given request.
-func (s *Sessions) SetValue(r *http.Request, w http.ResponseWriter, key, value string) error {
-	cookie, err := r.Cookie(cfg.SessionIDKey)
-
-	// No sessionID in request's cookies.
-	if err != nil {
-		return err
-	}
-
-	sessionID := cookie.Value
-
-	// Atomic
-	s.Lock()
-	defer s.Unlock()
-
-	session, ok := s.sessions[sessionID]
-	if !ok {
-		return errNoSessionWithID
-	}
-	if session.IP != strings.Split(r.RemoteAddr, ":")[0] {
-		return errIP
-	}
-	session.Values[key] = value
-
 	return nil
 }
 
