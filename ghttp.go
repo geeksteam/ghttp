@@ -219,8 +219,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		if err == nil {
 			sessionID = sessionCookie.Value
 		}
-		sessionParams := router.Sessions.GetAll()[sessionID].Values
-		api.Trigger.Call(sessionParams, w, r)
+		api.Trigger.Call(w, r)
 	}
 	// Insert func to gorilla/mux router
 	return router.HandleFunc(path, routerFunc)
@@ -267,8 +266,7 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 		if err == nil {
 			sessionID = sessionCookie.Value
 		}
-		sessionParams := router.Sessions.GetAll()[sessionID].Values
-		api.Trigger.Call(sessionParams, w, r)
+		api.Trigger.Call(w, r)
 	}
 	// Insert func to gorilla/mux router
 	return router.HandleFunc(path, routerFunc)

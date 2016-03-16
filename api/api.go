@@ -53,7 +53,7 @@ func (t apiTrigger) GetTriggersInfo() []TriggerInfo {
 
 // MakeAPICall is a middleware function, which is used in all ghttp.Router.HandleFuncRegistered
 // calls. Checks if current call is an API call, if true, makes this call.
-func (t *apiTrigger) Call(sessionParams map[string]string, w http.ResponseWriter, r *http.Request) {
+func (t *apiTrigger) Call(w http.ResponseWriter, r *http.Request) {
 	// Get actual api endpoint.
 	path := strings.Split(r.RequestURI, "?")[0]
 	path = strings.TrimPrefix(path, "/api/")
@@ -86,7 +86,7 @@ func (t *apiTrigger) Call(sessionParams map[string]string, w http.ResponseWriter
 	}
 
 	// Getting base request data: get, post query parameters and session data.
-	call := newAPICall(sessionParams, r)
+	call := newAPICall(r)
 
 	// Marshaling api call struct.
 	resultingJSON, _ := json.Marshal(call)
@@ -140,7 +140,7 @@ func readDir(path string, isRoot bool) []string {
 }
 
 // newAPICall constructs APICall struct.
-func newAPICall(sessionsParams map[string]string, r *http.Request) Call {
+func newAPICall(r *http.Request) Call {
 	r.ParseForm()
 	getParams := getQueryParamsMap(r.Form)
 	postParams := getQueryParamsMap(r.PostForm)
@@ -154,10 +154,9 @@ func newAPICall(sessionsParams map[string]string, r *http.Request) Call {
 
 	// Creating a corresponding api call struct.
 	call := Call{
-		Session: sessionsParams,
-		Get:     getParams,
-		Post:    postParams,
-		Stdin:   stdin,
+		Get:   getParams,
+		Post:  postParams,
+		Stdin: stdin,
 	}
 	return call
 }
