@@ -32,6 +32,7 @@ type (
 		Filename    string `json:"Filename"`
 		TmpFileName string `json:"TmpFileName"`
 		Created     string `json:"Created"`
+		Size        int64  `json:"Size"`
 	}
 
 	// TempFiles is a wrapper of []TempFile type, which provides additional functionality.
