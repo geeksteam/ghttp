@@ -106,15 +106,15 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			// Catch all panics from handler
 			if rec := recover(); rec != nil {
 				switch rec := rec.(type) {
-				// Panicerr panic
+				// Panicerr catched
 				case panicerr.Error:
-					logger.Log("", fmt.Sprintf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("warning", fmt.Sprintf("[ %v ] [ %v ] Error catched: Code '%v' Text '%v'", strings.Split(r.RemoteAddr, ":")[0],  r.RequestURI, rec.Code, rec.Err))
 					//Send response with json error description
-					w.WriteHeader(500)
+                    w.WriteHeader(500)
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
-					logger.Log("error", fmt.Sprintf("Unknown Error catched: '%v'  catched at %v, client %v \n ", rec, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("error", fmt.Sprintf("[ %v ] [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
 				}
@@ -236,12 +236,13 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 				switch rec := rec.(type) {
 				// Panicerr catched
 				case panicerr.Error:
-					logger.Log("warning", fmt.Sprintf("Error catched: Code '%v' Text '%v'  catched at %v, client %v \n ", rec.Code, rec.Err, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("warning", fmt.Sprintf("[ %v ] [ %v ] Error catched: Code '%v' Text '%v'", strings.Split(r.RemoteAddr, ":")[0],  r.RequestURI, rec.Code, rec.Err))
 					//Send response with json error description
+                    w.WriteHeader(500)
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
-					logger.Log("error", fmt.Sprintf("Unknown Error catched: '%v'  catched at %v, client %v \n ", rec, r.RequestURI, strings.Split(r.RemoteAddr, ":")[0]))
+					logger.Log("error", fmt.Sprintf("[ %v ] [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
 				}
