@@ -21,7 +21,7 @@ var (
 // CheckTimeout Check timeout for concrete handler
 func CheckTimeout(r *http.Request, s *sessions.Sessions) error {
 	// Check if current uri in map of timeouts
-	timeout, ok := timeouts[r.URL.Path]
+	timeout, ok := cfg.Timeouts[r.URL.Path]
 	if !ok {
 		return nil
 	}
