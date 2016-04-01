@@ -323,8 +323,6 @@ func (s *Sessions) Del(r *http.Request, w http.ResponseWriter) {
 
 // DelByID Atomic delete session by ID
 func (s *Sessions) DelByID(sessionID string) {
-	//close websocket
-	s.sessions[sessionID].Actualizer.CloseChan <- true
     // Lock for mutex
 	s.Lock()
     defer s.Unlock()
@@ -333,7 +331,9 @@ func (s *Sessions) DelByID(sessionID string) {
 	if !ok {
         log.Println("Trying to remove unexistent sessionID:", sessionID)
         return
-	} 
+	}
+    //close websocket
+	s.sessions[sessionID].Actualizer.CloseChan <- true
     delete(s.sessions, sessionID)
 }
 func (s *Sessions) getUserSessions(username string) []Session {
