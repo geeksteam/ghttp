@@ -325,16 +325,16 @@ func (s *Sessions) Del(r *http.Request, w http.ResponseWriter) {
 func (s *Sessions) DelByID(sessionID string) {
 	//close websocket
 	s.sessions[sessionID].Actualizer.CloseChan <- true
-
+    // Lock for mutex
 	s.Lock()
+    defer s.Unlock()
 	// check for session exist in map and delete
 	_, ok := s.sessions[sessionID]
-	if ok {
-		delete(s.sessions, sessionID)
-	} else {
-		log.Println("Trying to remove unexistent sessionID:", sessionID)
-	}
-	s.Unlock()
+	if !ok {
+        log.Println("Trying to remove unexistent sessionID:", sessionID)
+        return
+	} 
+    delete(s.sessions, sessionID)
 }
 func (s *Sessions) getUserSessions(username string) []Session {
 	s.Lock()
