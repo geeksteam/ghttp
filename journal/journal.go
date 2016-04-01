@@ -136,10 +136,10 @@ func Add(operation Operation) error {
 // CleanOld Delete entries which out of date
 func CleanOld() error {
 	db, err := bolt.Open(cfg.BoltDB, dbMode, nil)
-	defer db.Close()
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
 	return db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(cfg.BucketForOperations))
