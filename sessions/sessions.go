@@ -3,6 +3,7 @@ package sessions
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"sync"
@@ -326,7 +327,13 @@ func (s *Sessions) DelByID(sessionID string) {
 	s.sessions[sessionID].Actualizer.CloseChan <- true
 
 	s.Lock()
-	delete(s.sessions, sessionID)
+	// check for session exist in map and delete
+	_, ok := s.sessions[sessionID]
+	if ok {
+		delete(s.sessions, sessionID)
+	} else {
+		log.Println("Trying to remove unexistent sessionID:", sessionID)
+	}
 	s.Unlock()
 }
 func (s *Sessions) getUserSessions(username string) []Session {
