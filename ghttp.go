@@ -108,13 +108,13 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 				switch rec := rec.(type) {
 				// Panicerr catched
 				case panicerr.Error:
-					logger.Log("info", fmt.Sprintf("%v [ %v ] Error catched: Code '%v' Text '%v'", strings.Split(r.RemoteAddr, ":")[0],  r.RequestURI, rec.Code, rec.Err))
+					logger.Info( fmt.Sprintf("%v [ %v ] Error catched: Code '%v' Text '%v'", strings.Split(r.RemoteAddr, ":")[0],  r.RequestURI, rec.Code, rec.Err))
 					//Send response with json error description
                     w.WriteHeader(500)
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
-					logger.Log("error", fmt.Sprintf("%v [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
+					logger.Error( fmt.Sprintf("%v [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
 				}
@@ -127,7 +127,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		// 1. Prevent bruteforce of sessionID
 		ok, duration := bruteforce.Check(strings.Split(r.RemoteAddr, ":")[0])
 		if !ok {
-			logger.Log("warning", "IP "+strings.Split(r.RemoteAddr, ":")[0]+" banned by bruteforce (no session) for "+strconv.FormatInt(duration, 10)+" sec.")
+			logger.Warning( "IP "+strings.Split(r.RemoteAddr, ":")[0]+" banned by bruteforce (no session) for "+strconv.FormatInt(duration, 10)+" sec.")
 			http.Error(w, http.StatusText(429), 429)
 			return
 		}
@@ -135,7 +135,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		// 2. Check if session started and getting session info
 		sess, err := router.Sessions.Get(r)
 		if err != nil {
-			logger.Log("warning", err.Error())
+			logger.Warning( err.Error())
 			http.Error(w, http.StatusText(401), 401)
 			return
 		}
@@ -163,7 +163,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			allowedModules := userInfo.GetTemplate().Modules
 			if err != nil || !hasPermissions(r.RequestURI, allowedModules) {
 				http.Error(w, http.StatusText(403), 403)
-				logger.Log("warning", fmt.Sprintf("Permission denied to access '%v' for %v as user %v", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username))
+				logger.Warning( fmt.Sprintf("Permission denied to access '%v' for %v as user %v", r.RequestURI, strings.Split(r.RemoteAddr, ":")[0], sess.Username))
 				return
 			}
 		}
@@ -236,13 +236,13 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 				switch rec := rec.(type) {
 				// Panicerr catched
 				case panicerr.Error:
-					logger.Log("info", fmt.Sprintf("%v [ %v ] Error catched: Code '%v' Text '%v'", strings.Split(r.RemoteAddr, ":")[0],  r.RequestURI, rec.Code, rec.Err))
+					logger.Info( fmt.Sprintf("%v [ %v ] Error catched: Code '%v' Text '%v'", strings.Split(r.RemoteAddr, ":")[0],  r.RequestURI, rec.Code, rec.Err))
 					//Send response with json error description
                     w.WriteHeader(500)
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
-					logger.Log("error", fmt.Sprintf("%v [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
+					logger.Error( fmt.Sprintf("%v [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
 				}
