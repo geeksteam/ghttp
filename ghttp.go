@@ -110,8 +110,8 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 				case panicerr.Error:
 					logger.Info(fmt.Sprintf("%v [ %v ] Error catched: Code '%v' Text '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec.Code, rec.Err))
 					//Send response with json error description
-					w.WriteHeader(500)
 					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(500)
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
