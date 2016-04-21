@@ -52,10 +52,10 @@ func SetConfig(c Config) {
 
 // NewRouter constructs Router instances
 func NewRouter() *Router {
+	sessions.NewSessions()
 	return &Router{
 		curID:    0,
 		handlers: map[uint64]rhandler{},
-		Sessions: sessions.NewSessions(),
 		mutex:    sync.RWMutex{},
 		Router:   *mux.NewRouter(),
 	}
@@ -88,7 +88,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 			# Pre run
 		*/
 		// 1. Clean expired sessions
-		router.Sessions.CleanExpired()
+		sessions.SessionsStorage.CleanExpired()
 
 		// 2. Define empty handler
 		var handler rhandler
@@ -134,7 +134,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		}
 
 		// 2. Check if session started and getting session info
-		sess, err := router.Sessions.Get(r)
+		sess, err := sessions.SessionsStorage.Get(r)
 		if err != nil {
 			logger.Warning(err.Error())
 			http.Error(w, http.StatusText(401), 401)
@@ -145,14 +145,14 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		bruteforce.Clean(strings.Split(r.RemoteAddr, ":")[0])
 
 		// 4. Check for timeout before actions for particular handlers
-		if err := bruteforce.CheckTimeout(r, router.Sessions); err != nil {
+		if err := bruteforce.CheckTimeout(r, sessions.SessionsStorage); err != nil {
 			http.Error(w, http.StatusText(429), 429)
 			log.Println("Timeout error: ", err)
 			return
 		}
 
 		// 5. Register session activity for sessions timeout
-		router.Sessions.RegisterActivity(r)
+		sessions.SessionsStorage.RegisterActivity(r)
 
 		// 6. Check module access permisions
 		if sess.Username != "root" {
@@ -210,7 +210,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		/*
 			# Run handler's function
 		*/
-		f(w, r, router.Sessions)
+		f(w, r, sessions.SessionsStorage)
 
 		/*
 			# Make api trigger call
@@ -253,7 +253,7 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 		/*
 			Run handler's function
 		*/
-		f(w, r, router.Sessions)
+		f(w, r, sessions.SessionsStorage)
 
 		/*
 			Make api trigger call

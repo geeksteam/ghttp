@@ -21,6 +21,7 @@ var (
 	errNoSessionWithID = errors.New("Session not found: no sessions with given sessionID found.")
 	errIP              = errors.New("Session's IP and current user's IP are not equal.")
 	errValue           = errors.New("Value not found.")
+	SessionsStorage    *Sessions
 )
 
 func SetConfig(c SessionsConf) {
@@ -42,7 +43,7 @@ type (
 	// TODO:
 	// comment
 	ActualizeListener struct {
-		MessageChan chan string
+		MessageChan chan interface{}
 		CloseChan   chan bool
 		IsListening bool
 	}
@@ -95,8 +96,8 @@ type Sessions struct {
 }
 
 // NewSessions is a Sessions constructor.
-func NewSessions() *Sessions {
-	return &Sessions{make(map[string]Session), sync.RWMutex{}}
+func NewSessions() {
+	SessionsStorage = &Sessions{make(map[string]Session), sync.RWMutex{}}
 }
 
 // Get attempts to get session from local sessions map.
@@ -251,7 +252,7 @@ func (s *Sessions) StartNewSession(r *http.Request, w http.ResponseWriter, usern
 		Created:      time.Now().Unix(),
 		LastActivity: time.Now().Unix(),
 		Actualizer: &ActualizeListener{
-			MessageChan: make(chan string, 10),
+			MessageChan: make(chan interface{}, 10),
 			CloseChan:   make(chan bool, 10),
 			IsListening: false,
 		},
@@ -323,18 +324,18 @@ func (s *Sessions) Del(r *http.Request, w http.ResponseWriter) {
 
 // DelByID Atomic delete session by ID
 func (s *Sessions) DelByID(sessionID string) {
-    // Lock for mutex
+	// Lock for mutex
 	s.Lock()
-    defer s.Unlock()
+	defer s.Unlock()
 	// check for session exist in map and delete
 	_, ok := s.sessions[sessionID]
 	if !ok {
-        log.Println("Trying to remove unexistent sessionID:", sessionID)
-        return
+		log.Println("Trying to remove unexistent sessionID:", sessionID)
+		return
 	}
-    //close websocket
+	//close websocket
 	s.sessions[sessionID].Actualizer.CloseChan <- true
-    delete(s.sessions, sessionID)
+	delete(s.sessions, sessionID)
 }
 func (s *Sessions) getUserSessions(username string) []Session {
 	s.Lock()
@@ -352,7 +353,7 @@ func (s *Sessions) getUserSessions(username string) []Session {
 }
 
 // Actualize Send message to Actualizer chan. Uses for instant GUI updating through websocket
-func (s *Sessions) Actualize(username, message string) {
+func (s *Sessions) Actualize(username string, message interface{}) {
 	sessions := s.getUserSessions(username)
 
 	for _, sess := range sessions {
