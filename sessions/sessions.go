@@ -29,17 +29,6 @@ func SetConfig(c SessionsConf) {
 }
 
 type (
-	// TempFile represents temporary file which is uploaded by authorized user.
-	TempFile struct {
-		Filename    string `json:"Filename"`
-		TmpFileName string `json:"TmpFileName"`
-		Created     string `json:"Created"`
-		Size        int64  `json:"Size"`
-	}
-
-	// TempFiles is a wrapper of []TempFile type, which provides additional functionality.
-	TempFiles []TempFile
-
 	// TODO:
 	// comment
 	ActualizeListener struct {
@@ -48,28 +37,6 @@ type (
 		IsListening bool
 	}
 )
-
-// GetTempFileName returns actual temporary file name, which had given original name.
-// Returns empty string if no files with given original name are found.
-func (t TempFiles) GetTempFileName(originalName string) (tempName string) {
-	for _, v := range t {
-		if v.Filename == originalName {
-			return v.TmpFileName
-		}
-	}
-	return
-}
-
-// GetOriginalFileName returns actual file name of file with given temp name.
-// Returns empty string if no files with given temp name are found.
-func (t TempFiles) GetOriginalFileName(tempFileName string) (originalName string) {
-	for _, v := range t {
-		if v.TmpFileName == tempFileName {
-			return v.Filename
-		}
-	}
-	return
-}
 
 // Session stores info for user session
 type Session struct {
@@ -83,7 +50,6 @@ type Session struct {
 	Theme      string
 	Language   string
 	Template   string
-	Uploads    TempFiles          // Current sessions temp files list
 	Actualizer *ActualizeListener `json:"-"`
 
 	LastHandlers map[string]int64 // /handler and unixtime of last request
@@ -128,44 +94,6 @@ func (s *Sessions) Get(r *http.Request) (*Session, error) {
 	}
 
 	return deepcopy.Iface(&sess).(*Session), nil
-}
-
-// AddTempFile adds given TempFile struct to current session's internal tempfiles
-// list.
-func (s *Sessions) AddTempFile(r *http.Request, f TempFile) error {
-	sess, err := s.Get(r)
-	if err != nil {
-		return err
-	}
-	sess.Uploads = append(sess.Uploads, f)
-	err = s.Set(r, *sess)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// ClearTempFiles for remov
-func (s *Sessions) ClearTempFiles(r *http.Request) error {
-	sess, err := s.Get(r)
-	if err != nil {
-		return err
-	}
-	sess.Uploads = []TempFile{}
-	err = s.Set(r, *sess)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// GetTempFiles returns all TempFiles, registered to current session.
-func (s *Sessions) GetTempFiles(r *http.Request) (result TempFiles, err error) {
-	sess, err := s.Get(r)
-	if err != nil {
-		return TempFiles{}, err
-	}
-	return sess.Uploads, nil
 }
 
 // IsExist Check if session for user which send given request exist. It returns true if
