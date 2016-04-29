@@ -11,6 +11,7 @@ import (
 
 	"github.com/geeksteam/GoTools/logger"
 	"github.com/geeksteam/GoTools/shutdown"
+	"github.com/geeksteam/GoTools/stringutils"
 	"github.com/geeksteam/SHM-Backend/core/users"
 	"github.com/geeksteam/SHM-Backend/panicerr"
 	"github.com/geeksteam/ghttp/api"
@@ -86,11 +87,13 @@ func (r *Router) deleteHandler(id uint64) {
 func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter, *http.Request, *sessions.Sessions)) *mux.Route {
 	routerFunc := func(w http.ResponseWriter, r *http.Request) {
 		// Trigger starting of new process
-		if err := shutdown.DefaultWatcher.Start(); err != nil {
-			http.Error(w, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
-			return
+		if !isIgnored(r.RequestURI) {
+			if err := shutdown.DefaultWatcher.Start(); err != nil {
+				http.Error(w, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
+				return
+			}
+			defer shutdown.DefaultWatcher.Finish()
 		}
-		defer shutdown.DefaultWatcher.Finish()
 
 		/*
 			# Pre run
@@ -312,4 +315,14 @@ func setHeaderNoCache(w http.ResponseWriter) {
 	w.Header().Set("Pragma", "no-cache")
 	w.Header().Set("Expires", "-1")
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func isIgnored(path string) bool {
+	var ignored = []string{
+		"/api/info/actualizer/",
+		"/api/shell/console",
+		"/api/core/livesysstat",
+	}
+
+	return stringutils.Contains(ignored, path)
 }
