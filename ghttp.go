@@ -14,7 +14,7 @@ import (
 	"github.com/geeksteam/GoTools/stringutils"
 	"github.com/geeksteam/SHM-Backend/core/users"
 	"github.com/geeksteam/SHM-Backend/panicerr"
-	"github.com/geeksteam/ghttp/api"
+	"github.com/geeksteam/SHM-Backend/plugins"
 	"github.com/geeksteam/ghttp/bruteforce"
 	"github.com/geeksteam/ghttp/journal"
 	"github.com/geeksteam/ghttp/moduleutils"
@@ -40,9 +40,6 @@ func SetConfig(c Config) {
 		BucketForOperations: cfg.Journal.BucketForOperations,
 		Capacity:            cfg.Journal.Capacity,
 		DataEncoding:        cfg.Journal.DataEncoding,
-	})
-	api.SetConfig(api.API{
-		ApiPath: cfg.API.ApiPath,
 	})
 	sessions.SetConfig(sessions.SessionsConf{
 		SessionIDKey:       cfg.SessionsConf.SessionIDKey,
@@ -226,7 +223,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		/*
 			# Make api trigger call
 		*/
-		api.Trigger.Call(w, r)
+		plugins.DefaultManager.Trigger(w, r)
 	}
 	// Insert func to gorilla/mux router
 	return router.HandleFunc(path, routerFunc)
@@ -269,7 +266,7 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 		/*
 			Make api trigger call
 		*/
-		api.Trigger.Call(w, r)
+		plugins.DefaultManager.Trigger(w, r)
 	}
 	// Insert func to gorilla/mux router
 	return router.HandleFunc(path, routerFunc)
