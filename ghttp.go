@@ -223,7 +223,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 		/*
 			# Make api trigger call
 		*/
-		plugins.DefaultManager.Trigger(w, r)
+		plugins.DefaultManager.Trigger(w, r, sess)
 	}
 	// Insert func to gorilla/mux router
 	return router.HandleFunc(path, routerFunc)
@@ -266,7 +266,7 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 		/*
 			Make api trigger call
 		*/
-		plugins.DefaultManager.Trigger(w, r)
+		plugins.DefaultManager.Trigger(w, r, nil)
 	}
 	// Insert func to gorilla/mux router
 	return router.HandleFunc(path, routerFunc)
