@@ -1,9 +1,11 @@
 package handlerUtils
 
 import (
+	"bytes"
 	"compress/gzip"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -58,9 +60,18 @@ func GetSessionUser(r *http.Request, s *sessions.Sessions) (string, error) {
 // If somethings goes wrong, it makes valid error response to client.
 func ParseJSONBody(w http.ResponseWriter, r *http.Request, jsonStruct interface{}) {
 	defer r.Body.Close()
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(jsonStruct)
+	buf, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		panicerr.Handlers.BadRequest(err)
+	}
+
+	rdr1 := ioutil.NopCloser(bytes.NewBuffer(buf))
+	rdr2 := ioutil.NopCloser(bytes.NewBuffer(buf))
+
+	r.Body = rdr2
+
+	decoder := json.NewDecoder(rdr1)
+	if err := decoder.Decode(jsonStruct); err != nil {
 		panicerr.JSON.ParsingError(err)
 	}
 }
