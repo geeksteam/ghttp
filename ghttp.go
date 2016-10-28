@@ -19,6 +19,7 @@ import (
 	"github.com/geeksteam/ghttp/journal"
 	"github.com/geeksteam/ghttp/moduleutils"
 	"github.com/geeksteam/ghttp/sessions"
+	"github.com/getsentry/raven-go"
 	"github.com/gorilla/mux"
 )
 
@@ -123,6 +124,7 @@ func (router *Router) HandleInternalFunc(path string, f func(http.ResponseWriter
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
+					raven.CaptureError(fmt.Errorf("%v", rec), nil)
 					logger.Error(fmt.Sprintf("%v [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
@@ -251,6 +253,7 @@ func (router *Router) HandleLoginFunc(path string, f func(http.ResponseWriter, *
 					w.Write([]byte(rec.ToJSONString()))
 				// Unknown panic
 				default:
+					raven.CaptureError(fmt.Errorf("%v", rec), nil)
 					logger.Error(fmt.Sprintf("%v [ %v ] Unknown Error catched: '%v'", strings.Split(r.RemoteAddr, ":")[0], r.RequestURI, rec))
 					http.Error(w, http.StatusText(500), 500)
 					panic(rec)
